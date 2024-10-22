@@ -40,3 +40,6 @@ pip install opencv-python-headless
 
 ## face2blue.py
 画像から人の顔を識別し、その人数が何人いるかや、顔にぼかしを描画することができます。
+
+## video2mosaic.py
+動画（画像）から人の顔を識別し、その人にぼかしを描画することができます。

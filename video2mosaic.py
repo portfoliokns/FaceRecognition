@@ -20,16 +20,17 @@ def mosaic(img, x, y, w, h, size):
 # 動画の読み込み
 cascade_file= cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
 clas = cv2.CascadeClassifier(cascade_file)
-cap = cv2.VideoCapture("./videoplayback.mp4")
+cap = cv2.VideoCapture("./test.mov")
 
 # 保存用のVideoWriterオブジェクトを作成
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps = cap.get(cv2.CAP_PROP_FPS)
-output_file = 'output_video'
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+output_file = 'output_video.mp4'
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v'はMP4形式
 out = cv2.VideoWriter(output_file, fourcc, fps, (frame_width, frame_height))
 
+mosaic_para = 20
 while True:
     ret, frame = cap.read()
 
@@ -39,15 +40,12 @@ while True:
     # 顔の位置を算出
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     face_locations = recognition.face_locations(rgb_frame)
+    image_cv2 = frame.copy()
 
-    if face_locations:
-        # 描画
-        top, right, bottom, left = face_locations[0]
-        x, y, w, h, size = left, top, right - left, bottom - top, 20
-        image_cv2 = mosaic(frame, x, y, w, h, size)
-
-    else:
-        image_cv2 = frame.copy()
+    # 描画
+    for (top, right, bottom, left) in face_locations:
+        x, y, w, h = left, top, right - left, bottom - top
+        image_cv2 = mosaic(image_cv2, x, y, w, h, mosaic_para)
 
     out.write(image_cv2)
 
